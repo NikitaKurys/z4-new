@@ -28,6 +28,13 @@ class Student:
         result = f"Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за домашние задания: {self.average_number()}\nКурсы в процессе изучения: {self.courses_in_progress}\nЗавершенные курсы: {self.finished_courses}"
         return result
 
+    def __lt__(self, other):
+        if self.average_number() < other:
+            print(f"\n-У студента {self.name} средний балл за д/з ниже")
+        else:
+            print(f"\n-У студента {self.name} средний балл за д/з выше")
+        return self.average_number() < other
+
 
 class Mentor:
     def __init__(self, name, surname):
@@ -53,6 +60,13 @@ class Lecturer(Mentor):
         result = f"Имя: {self.name}\nФамилия: {self.surname}\nСредняя оценка за лекции:{self.average_number()}"
         return result
 
+    def __lt__(self, other):
+        if self.average_number() < other:
+            print(f"\n-У лектора {self.name} средний балл за лекции ниже")
+        else:
+            print(f"\n-У лектора {self.name} средний балл за лекции выше")
+        return self.average_number() < other
+
 
 class Reviewer(Mentor):
     def rate_hw(self, student, course, grade):
@@ -68,10 +82,27 @@ class Reviewer(Mentor):
         result = f"Имя: {self.name}\nФамилия: {self.surname}"
         return result
 
-value = 0
-value1 = 0
-counter = 0
-counter1 = 0
+
+def average_score_students():
+    value = 0
+    counter = 0
+    for students in Student.registry:
+        if "Python" in students.courses_in_progress:
+            value += students.average_number()
+            counter += 1
+    return print(f"\n-средний балл по д/з курса Python среди всех учеников: {value / counter}")
+
+
+def average_score_lecturer():
+    value = 0
+    counter = 0
+    for lecturer in Lecturer.registry:
+        if "Python" in lecturer.courses_attached:
+            value += lecturer.average_number()
+            counter += 1
+    print(f"\n-средний балл у лекторов  по лекциям Python: {value / counter}")
+
+
 best_student = Student('Ruoy', 'Eman', 'your_gender')
 best_student.courses_in_progress += ['Python', 'С++']
 best_student.finished_courses += ['Введение в программирование']
@@ -91,26 +122,19 @@ ordinary_lecturer.courses_attached += ['C++', 'Python']
 cool_reviewer.rate_hw(best_student, 'Python', 10)
 cool_reviewer.rate_hw(best_student, 'Python', 10)
 cool_reviewer.rate_hw(best_student, 'Python', 5)
-cool_reviewer.rate_hw(ordinary_student, 'Python', 10)
-cool_reviewer.rate_hw(ordinary_student, 'Python', 10)
-cool_reviewer.rate_hw(ordinary_student, 'Python', 10)
+cool_reviewer.rate_hw(ordinary_student, 'Python', 9)
+cool_reviewer.rate_hw(ordinary_student, 'Python', 8)
+cool_reviewer.rate_hw(ordinary_student, 'Python', 9)
 
-best_student.rate_hw(best_lecturer, 'Python', 7)
+best_student.rate_hw(best_lecturer, 'Python', 10)
 best_student.rate_hw(best_lecturer, 'Python', 8)
-best_student.rate_hw(best_lecturer, 'Python', 6)
-ordinary_student.rate_hw(ordinary_lecturer, "Python", 10)
+best_student.rate_hw(best_lecturer, 'Python', 9)
+ordinary_student.rate_hw(ordinary_lecturer, "Python", 6)
 ordinary_student.rate_hw(ordinary_lecturer, "Python", 8)
 ordinary_student.rate_hw(ordinary_lecturer, "Python", 7)
 
 print(f"{cool_reviewer}\n\n{best_lecturer}\n\n{best_student}\n\n{ordinary_reviewer}\n\n{ordinary_lecturer}\n\n{ordinary_student}")
-
-for students in Student.registry:
-    if "Python" in students.courses_in_progress:
-        value += students.average_number()
-        counter += 1
-print(f"средний балл по д/з курса Python среди всех учеников: {value / counter}")
-for lecturer in Lecturer.registry:
-    if "Python" in lecturer.courses_attached:
-        value1 += lecturer.average_number()
-        counter1 += 1
-print(f"средний балл у лекторов  по лекциям Python: {value1 / counter1}")
+is_it_lecturer = ordinary_lecturer < best_lecturer.average_number()
+is_it_student = ordinary_student < best_student.average_number()
+average_score_students()
+average_score_lecturer()
